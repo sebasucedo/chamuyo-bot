@@ -1,37 +1,17 @@
 import os
 import requests
-from openai import OpenAI
 import json
+from openai import OpenAI
+from datetime import datetime
+
 
 def lambda_handler(event, context):
 
-  client = OpenAI()
-
-  completion = client.chat.completions.create(
-    model="gpt-4",
-    messages=[
-      {"role": "system", "content": "You are a frustrated developer who became a scrum master, you think you are the ultimate ontological coach but you really have no experience in anything."},
-      {"role": "user", "content": "Write an inspirational phrase for a development team based on the current day of the week."}
-    ]
-  )
-
-  message = completion.choices[0].message.content
-
-
   chat_ids = get_chat_ids()
 
-  directs_ids = chat_ids['directs']
-  for chat_id in directs_ids:
-      chat_id_str = str(chat_id)
-      response = send_telegram_message(chat_id_str, message)
-      print(response)
+  message = get_message_from_ai()
 
-  groups_ids = chat_ids['groups']
-  for chat_id in groups_ids:
-      chat_id_str = str(chat_id)
-      response = send_telegram_message(chat_id_str, message)
-      print(response)
-
+  send_mesagges(chat_ids, message)
 
   return {
       'statusCode': 200,
@@ -41,6 +21,41 @@ def lambda_handler(event, context):
 
 TOKEN_TELEGRAM = os.getenv('TELEGRAM_TOKEN')
 URL_TELEGRAM_UPDATES= f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/getUpdates"
+
+
+def send_mesagges(chat_ids, message):
+    directs_ids = chat_ids['directs']
+    for chat_id in directs_ids:
+        chat_id_str = str(chat_id)
+        response = send_telegram_message(chat_id_str, message)
+        print(response)
+
+    groups_ids = chat_ids['groups']
+    for chat_id in groups_ids:
+        chat_id_str = str(chat_id)
+        response = send_telegram_message(chat_id_str, message)
+        print(response)
+
+
+def get_message_from_ai():
+    client = OpenAI()
+
+    weekday_number = datetime.now().weekday()
+    days_of_the_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    current_weekday = days_of_the_week[weekday_number]
+    prompt = f"Write an inspirational phrase for a development team based on the current day of the week. Today is {current_weekday}."
+
+    completion = client.chat.completions.create(
+    model="gpt-4",
+    messages=[
+      {"role": "system", "content": "You are a frustrated developer who became a scrum master, you think you are the ultimate ontological coach but you really have no experience in anything."},
+      {"role": "user", "content": prompt}
+      ]
+    )
+
+    message = completion.choices[0].message.content
+    return message
+
 
 def get_chat_ids():
     response = requests.get(URL_TELEGRAM_UPDATES)
