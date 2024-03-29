@@ -15,40 +15,40 @@ def lambda_handler(event, context):
     ]
   )
 
-  mensaje = completion.choices[0].message.content
+  message = completion.choices[0].message.content
 
 
-  ids_chats = obtener_ids_chats()
+  chat_ids = get_chat_ids()
 
-  ids_directos = ids_chats['directos']
-  for chat_id in ids_directos:
+  directs_ids = chat_ids['directs']
+  for chat_id in directs_ids:
       chat_id_str = str(chat_id)
-      respuesta = enviar_mensaje_telegram(chat_id_str, mensaje)
+      response = send_telegram_message(chat_id_str, message)
+      print(response)
 
-  # ids_grupos = ids_chats['grupos']
-  # for chat_id in ids_grupos:
-  #     chat_id_str = str(chat_id)
-  #     respuesta = enviar_mensaje_telegram(chat_id_str, mensaje)
-
+  groups_ids = chat_ids['groups']
+  for chat_id in groups_ids:
+      chat_id_str = str(chat_id)
+      response = send_telegram_message(chat_id_str, message)
+      print(response)
 
 
   return {
       'statusCode': 200,
-      'body': json.dumps('Hello from Lambda!')
+      'body': json.dumps('Messages sent!')
   }
 
 
 TOKEN_TELEGRAM = os.getenv('TELEGRAM_TOKEN')
 URL_TELEGRAM_UPDATES= f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/getUpdates"
 
+def get_chat_ids():
+    response = requests.get(URL_TELEGRAM_UPDATES)
+    updates = response.json().get('result', [])
 
-def obtener_ids_chats():
-    respuesta = requests.get(URL_TELEGRAM_UPDATES)
-    updates = respuesta.json().get('result', [])
-
-    ids_chats = {
-        'grupos': [],
-        'directos': []
+    chat_ids = {
+        'groups': [],
+        'directs': []
     }
     for update in updates:
         chat_info = None
@@ -57,25 +57,25 @@ def obtener_ids_chats():
             chat_info = update['my_chat_member']['chat']
             chat_type = chat_info['type']
             if chat_type in ['group', 'supergroup']:
-                ids_chats['grupos'].append(chat_info['id'])
+                chat_ids['groups'].append(chat_info['id'])
 
         elif 'message' in update:
             chat_info = update['message']['chat']
             chat_type = chat_info['type']
             if chat_type == 'private':
-                ids_chats['directos'].append(chat_info['id'])
+                chat_ids['directs'].append(chat_info['id'])
             elif chat_type in ['group', 'supergroup']:
-                ids_chats['grupos'].append(chat_info['id'])
+                chat_ids['groups'].append(chat_info['id'])
 
-    ids_chats['grupos'] = list(set(ids_chats['grupos']))
-    ids_chats['directos'] = list(set(ids_chats['directos']))
+    chat_ids['groups'] = list(set(chat_ids['groups']))
+    chat_ids['directs'] = list(set(chat_ids['directs']))
 
-    return ids_chats
+    return chat_ids
 
 
-def enviar_mensaje_telegram(chat_id, mensaje):
+def send_telegram_message(chat_id, message):
     url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage"
-    payload = {"chat_id": chat_id, "text": mensaje}
+    payload = {"chat_id": chat_id, "text": message}
 
     response = requests.post(url, data=payload)
     return response.json()
