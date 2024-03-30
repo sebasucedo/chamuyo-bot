@@ -1,5 +1,7 @@
 import os
 import requests
+import asyncio
+import aiohttp
 
 TOKEN_TELEGRAM = os.getenv('TELEGRAM_TOKEN')
 URL_TELEGRAM_UPDATES= f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/getUpdates"
@@ -36,27 +38,25 @@ def get_chat_ids():
     return chat_ids
 
 
-def send_messages(chat_ids, message):
-    directs_ids = chat_ids['directs']
-    for chat_id in directs_ids:
-        chat_id_str = str(chat_id)
-        response = send_telegram_message(chat_id_str, message)
-        print(response)
+async def send_messages(chat_ids, message):
+    async with aiohttp.ClientSession() as session:
+      tasks = []
+      for chat_id in chat_ids['directs'] + chat_ids['groups']:
+          task = asyncio.create_task(send_telegram_message(session, chat_id, message))
+          tasks.append(task)
 
-    groups_ids = chat_ids['groups']
-    for chat_id in groups_ids:
-        chat_id_str = str(chat_id)
-        response = send_telegram_message(chat_id_str, message)
-        print(response)
+      responses = await asyncio.gather(*tasks)
+      return responses
+    
 
-def send_telegram_message(chat_id, message):
+async def send_telegram_message(session, chat_id, message):
     url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage"
     payload = {"chat_id": chat_id, "text": message}
 
     try:
-        response = requests.post(url, data=payload)
-        response.raise_for_status()
-        return response.json()
+      async with session.post(url, data=payload) as response:
+          return await response.json() 
+    
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
     except requests.exceptions.ConnectionError as conn_err:

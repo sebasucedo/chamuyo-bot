@@ -1,13 +1,17 @@
 import json
+import asyncio
 from ai import get_message_content
 from telegram import get_chat_ids, send_messages
 
 
-def lambda_handler(event, context):
+async def lambda_handler(event, context):
     try:
         chat_ids = get_chat_ids()
         message = get_message_content()
-        send_messages(chat_ids, message)
+
+        responses = await send_messages(chat_ids, message)
+        for response in responses:
+            print(response)
     except Exception as e:
         print(f"An error occurred: {e}")
         return {
@@ -21,4 +25,4 @@ def lambda_handler(event, context):
     }
 
 
-# lambda_handler(None, None)
+# asyncio.run(lambda_handler(None, None))
