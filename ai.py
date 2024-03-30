@@ -13,12 +13,12 @@ def get_message_content():
       prompt = f"Write an inspirational phrase for a development team based on the current day of the week. Today is {current_weekday}."
 
       completion = client.chat.completions.create(
-      model=MODEL,
-      messages=[
-        {"role": "system", "content": "You are a frustrated developer who became a scrum master, you think you are the ultimate ontological coach but you really have no experience in anything."},
-        {"role": "user", "content": prompt}
-        ]
-      )
+        model=MODEL,
+        messages=[
+          {"role": "system", "content": "You are a frustrated developer who became a scrum master, you think you are the ultimate ontological coach but you really have no experience in anything."},
+          {"role": "user", "content": prompt}
+          ]
+        )
 
       message = completion.choices[0].message.content
       return message
