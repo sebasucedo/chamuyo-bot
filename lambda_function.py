@@ -4,7 +4,7 @@ from ai import get_message_content
 from telegram import get_chat_ids, send_messages
 
 
-async def lambda_handler(event, context):
+async def lambda_handler_async(event, context):
     try:
         chat_ids = get_chat_ids()
         message = get_message_content()
@@ -24,5 +24,7 @@ async def lambda_handler(event, context):
         'body': json.dumps('Messages sent!')
     }
 
+def lambda_handler(event, context):
+    return asyncio.run(lambda_handler_async(event, context))
 
-# asyncio.run(lambda_handler(None, None))
+# lambda_handler(None, None)
