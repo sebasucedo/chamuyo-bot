@@ -25,6 +25,7 @@ async def lambda_handler_async(event, context):
     }
 
 def lambda_handler(event, context):
+    # github actions test 1
     return asyncio.run(lambda_handler_async(event, context))
 
 # lambda_handler(None, None)
