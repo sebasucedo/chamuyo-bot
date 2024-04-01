@@ -6,8 +6,7 @@ import aiohttp
 TOKEN_TELEGRAM = os.getenv('TELEGRAM_TOKEN')
 URL_TELEGRAM_UPDATES= f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/getUpdates"
 
-def get_chat_ids():
-
+def get_chats():
     response = requests.get(URL_TELEGRAM_UPDATES)
     updates = response.json().get('result', [])
 
@@ -22,18 +21,21 @@ def get_chat_ids():
             chat_info = update['my_chat_member']['chat']
             chat_type = chat_info['type']
             if chat_type in ['group', 'supergroup']:
-                chat_ids['groups'].append(chat_info['id'])
+                chat_ids['groups'].append({'id': chat_info['id'], 'name': chat_info.get('title'), 'type': "group"})
 
         elif 'message' in update:
             chat_info = update['message']['chat']
             chat_type = chat_info['type']
             if chat_type == 'private':
-                chat_ids['directs'].append(chat_info['id'])
+                chat_ids['directs'].append({'id': chat_info['id'], 'name': chat_info.get('username'), 'type': "direct"})
             elif chat_type in ['group', 'supergroup']:
-                chat_ids['groups'].append(chat_info['id'])
+                chat_ids['groups'].append({'id': chat_info['id'], 'name': chat_info.get('title'), 'type': "group"})
 
-    chat_ids['groups'] = list(set(chat_ids['groups']))
-    chat_ids['directs'] = list(set(chat_ids['directs']))
+    unique_group_ids = {each['id']: each for each in chat_ids['groups']}.values()
+    chat_ids['groups'] = list(unique_group_ids)
+
+    unique_direct_ids = {each['id']: each for each in chat_ids['directs']}.values()
+    chat_ids['directs'] = list(unique_direct_ids)
 
     return chat_ids
 
@@ -41,7 +43,7 @@ def get_chat_ids():
 async def send_messages(chat_ids, message):
     async with aiohttp.ClientSession() as session:
       tasks = []
-      for chat_id in chat_ids['directs'] + chat_ids['groups']:
+      for chat_id in chat_ids:
           task = asyncio.create_task(send_telegram_message(session, chat_id, message))
           tasks.append(task)
 
