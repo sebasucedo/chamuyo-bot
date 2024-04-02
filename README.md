@@ -1,13 +1,54 @@
-# chamuyo-bot
-solo humo
 
-https://t.me/chamuyo_bot
+# Chamuyo-Bot
 
+## Descripción
 
+**Chamuyo-Bot** es un bot de Telegram diseñado para inyectar una dosis diaria de inspiración en tu equipo de desarrollo de software. Cada mañana, este bot envía mensajes motivacionales a los miembros de tu equipo, ayudando a empezar el día con energía positiva y una mentalidad enfocada. Ideal para equipos que buscan mantener alta la moral y fomentar un ambiente de trabajo colaborativo y entusiasta.
+
+Este proyecto utiliza la API de OpenAI para generar mensajes inspiracionales únicos, asegurando que cada día comiences con algo nuevo y estimulante.
+
+Enlace al bot: [chamuyo-bot](https://t.me/chamuyo_bot)
+
+## Características
+
+- Envío automático de mensajes inspiracionales cada mañana.
+- Mensajes generados mediante inteligencia artificial para ofrecer variedad y relevancia.
+- Fácil configuración y personalización para adaptarse a las necesidades de tu equipo.
+
+## Requisitos
+
+Antes de comenzar, asegúrate de tener instalado Python y pip. Este proyecto requiere las siguientes librerías:
+
+- openai
+- requests
+- aiohttp
+- boto3
+
+Puedes instalar todas las dependencias necesarias con el siguiente comando:
+
+```bash
 pip install openai requests aiohttp boto3
+```
 
+## Configuración
 
-export OPENAI_API_KEY='{OPENAI_API_KEY}'
+Para que **Chamuyo-Bot** funcione correctamente, necesitas configurar las siguientes variables de entorno con tus claves de API de OpenAI y el token de tu bot de Telegram:
 
-export TELEGRAM_TOKEN='{TELEGRAM_TOKEN}'
+```bash
+export OPENAI_API_KEY='tu_clave_api_openai'
+export TELEGRAM_TOKEN='tu_token_telegram'
+```
 
+Asegúrate de reemplazar `tu_clave_api_openai` y `tu_token_telegram` con tus respectivas claves.
+
+## Uso
+
+Una vez configurado, puedes iniciar el bot ejecutando el script principal. Este se encargará de enviar automáticamente los mensajes inspiracionales a los miembros del equipo cada mañana.
+
+## Contribuir
+
+Si estás interesado en contribuir al proyecto, tus aportes son bienvenidos. Puedes abrir un issue para discutir lo que te gustaría cambiar o directamente enviar un pull request con tus mejoras.
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles.
