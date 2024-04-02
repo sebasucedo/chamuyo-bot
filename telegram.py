@@ -45,6 +45,7 @@ async def send_messages(chat_ids, message):
       tasks = []
       for chat_id in chat_ids:
           task = asyncio.create_task(send_telegram_message(session, chat_id, message))
+          print(f"Adding task to send message to chat_id: {chat_id}")
           tasks.append(task)
 
       responses = await asyncio.gather(*tasks)
