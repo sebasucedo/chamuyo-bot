@@ -3,7 +3,7 @@
 
 ## Descripción
 
-**Chamuyo-Bot** es un bot de Telegram diseñado para generar una carcajada, o si se lo toman en serio hasta motiviación, a tu desanimado e inerte equipo de desarrollo de software. Cada mañana, este bot envía mensajes "motivacionales" a los miembros de tu equipo. Ideal para equipos de virgos nerds que no suben PR en semanas y el último feature sin errores fue el cambio de la precisión decimal en una columna tipo INT.
+**Chamuyo-Bot** es un bot de Telegram diseñado para generar una carcajada, o si se lo toman en serio hasta motivación, a tu desanimado e inerte equipo de desarrollo de software. Cada mañana, este bot envía mensajes "motivacionales" a los miembros de tu equipo. Ideal para equipos de virgos nerds que no suben PR en semanas y el último feature sin errores fue el cambio de la precisión decimal en una columna tipo INT.
 
 Este proyecto utiliza la API de OpenAI para generar los mensajes, para que ningún ser humano tenga que esforzarse.
 
