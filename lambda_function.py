@@ -5,7 +5,7 @@ from telegram import get_chats, send_messages
 from dynamodb import manage_chats
 
 
-async def lambda_handler_async(event, context):
+def lambda_handler(event, context):
     try:
         telegra_chats = get_chats()
         chats = manage_chats(telegra_chats['groups'] + telegra_chats['directs'])
@@ -13,7 +13,7 @@ async def lambda_handler_async(event, context):
 
         message = get_message_content()
 
-        responses = await send_messages(ids, message)
+        responses = asyncio.run(async_handler(ids, message))
         for response in responses:
             print(response)
     except Exception as e:
@@ -28,9 +28,10 @@ async def lambda_handler_async(event, context):
         'body': json.dumps('Messages sent!')
     }
 
-
-def lambda_handler(event, context):
-    return asyncio.run(lambda_handler_async(event, context))
-
+async def async_handler(ids, message):
+    responses = await send_messages(ids, message)
+    await asyncio.sleep(1)
+    return responses
+    
 
 # lambda_handler(None, None)

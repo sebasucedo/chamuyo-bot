@@ -3,15 +3,15 @@
 
 ## Descripción
 
-**Chamuyo-Bot** es un bot de Telegram diseñado para inyectar una dosis diaria de inspiración en tu equipo de desarrollo de software. Cada mañana, este bot envía mensajes motivacionales a los miembros de tu equipo, ayudando a empezar el día con energía positiva y una mentalidad enfocada. Ideal para equipos que buscan mantener alta la moral y fomentar un ambiente de trabajo colaborativo y entusiasta.
+**Chamuyo-Bot** es un bot de Telegram diseñado para generar una carcajada, o si se lo toman en serio hasta motiviación, a tu desanimado e inerte equipo de desarrollo de software. Cada mañana, este bot envía mensajes "motivacionales" a los miembros de tu equipo. Ideal para equipos de virgos nerds que no suben PR en semanas y el último feature sin errores fue el cambio de la precisión decimal en una columna tipo INT.
 
-Este proyecto utiliza la API de OpenAI para generar mensajes inspiracionales únicos, asegurando que cada día comiences con algo nuevo y estimulante.
+Este proyecto utiliza la API de OpenAI para generar los mensajes, para que ningún ser humano tenga que esforzarse.
 
 Enlace al bot: [chamuyo-bot](https://t.me/chamuyo_bot)
 
 ## Características
 
-- Envío automático de mensajes inspiracionales cada mañana.
+- Envío automático de mensajes cada mañana.
 - Mensajes generados mediante inteligencia artificial para ofrecer variedad y relevancia.
 - Fácil configuración y personalización para adaptarse a las necesidades de tu equipo.
 
