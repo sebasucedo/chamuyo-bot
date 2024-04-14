@@ -40,7 +40,7 @@ def get_chats():
     return chat_ids
 
 
-async def send_messages(chat_ids, message):
+async def send_messages_async(chat_ids, message):
     async with aiohttp.ClientSession() as session:
       tasks = []
       for chat_id in chat_ids:
@@ -50,9 +50,8 @@ async def send_messages(chat_ids, message):
 
       responses = await asyncio.gather(*tasks)
       return responses
-    
 
-async def send_telegram_message(session, chat_id, message):
+async def send_telegram_message_async(session, chat_id, message):
     url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage"
     payload = {"chat_id": chat_id, "text": message}
 
@@ -70,3 +69,27 @@ async def send_telegram_message(session, chat_id, message):
         print(f"An error occurred while making the request: {req_err}")
 
     return {"error": f"An error occurred while sending the message to chat_id: {chat_id}."}
+
+
+def send_messages(chat_ids, message):
+    for chat_id in chat_ids:
+        chat_id_str = str(chat_id)
+        response = send_message(chat_id_str, message)
+        print(response) 
+    
+def send_message(chat_id, message):
+    url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage"
+    payload = {"chat_id": chat_id, "text": message}
+
+    try:
+        response = requests.post(url, data=payload)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+    except requests.exceptions.ConnectionError as conn_err:
+        print(f"Connection error occurred: {conn_err}")
+    except requests.exceptions.Timeout as timeout_err:
+        print(f"Timeout error occurred: {timeout_err}")
+    except requests.exceptions.RequestException as req_err:
+        print(f"An error occurred while making the request: {req_err}")
