@@ -1,8 +1,12 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import json
 import asyncio
-from ai import get_message_content
-from telegram import get_chats, send_messages
-from dynamodb import manage_chats
+from utils.ai import get_message_content
+from utils.telegram import get_chats, send_messages
+from utils.dynamodb import manage_chats
 
 
 def lambda_handler(event, context):
@@ -34,4 +38,4 @@ async def async_handler(ids, message):
     return responses
     
 
-# lambda_handler(None, None)
+lambda_handler(None, None)
