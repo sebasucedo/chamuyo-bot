@@ -23,6 +23,24 @@ def get_message_content():
       message = completion.choices[0].message.content
       return message
     except Exception as e:
-        print(f"An unexpected error occurred trying to get message content: {e}")
-        raise
-    
+      print(f"An unexpected error occurred trying to get message content: {e}")
+      raise
+
+def get_response(incoming_message):
+    try:
+      client = OpenAI()
+      prompt = f"Respond to the following message with the most extreme of purist agilism: {incoming_message}."
+
+      completion = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+          {"role": "system", "content": "You are a frustrated developer who became a scrum master, you think you are the ultimate ontological coach but you really have no experience in anything."},
+          {"role": "user", "content": prompt}
+          ]
+        )
+
+      message = completion.choices[0].message.content
+      return message
+    except Exception as e:
+      print(f"An unexpected error occurred trying to get message content: {e}")
+      raise      
