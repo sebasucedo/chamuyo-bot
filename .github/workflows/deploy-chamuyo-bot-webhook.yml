@@ -1,4 +1,4 @@
-name: Deploy Python Lambda
+name: Deploy chamuyo-bot-webook Lambda Function
 
 on:
   push:
