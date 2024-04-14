@@ -29,7 +29,7 @@ def get_message_content():
 def get_response(incoming_message):
     try:
       client = OpenAI()
-      prompt = f"Respond to the following message with the most extreme of purist agilism: {incoming_message}."
+      prompt = f"Respond briefly in a single line as if in a dialogue, the following telegram short message with the most extreme of purist agilism: {incoming_message}."
 
       completion = client.chat.completions.create(
         model=MODEL,
