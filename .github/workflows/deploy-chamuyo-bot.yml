@@ -45,8 +45,8 @@ jobs:
 
         # Copy only the modified .py files from the commit into the unzipped directory
         # This will maintain their directory structure.
-        for file in $(git diff-tree --no-commit-id --name-only -r HEAD); do
-            if [[ $file == *.py ]]; then
+        for file in $(git diff --name-only HEAD^ HEAD); do
+            if [[ $file == *".py" ]]; then
                 # Create the directory structure in lambda_env for the modified file
                 mkdir -p lambda_env/$(dirname $file)
                 # Copy the modified file
