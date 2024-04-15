@@ -6,13 +6,34 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from utils.ai import get_response
 from utils.telegram import send_message
+from utils.dynamodb import insert
 
 
 def lambda_handler(event, context):
     message = json.loads(event["body"])
     chat_id = message["message"]["chat"]["id"]
-    incoming_text = message["message"].get("text", "")
+    incoming_text = message["message"].get("text", "")  
     
+    #TODO: move this logic to a separate function
+    try:
+        if "message" in message and "from" in message["message"]:
+            name = message["message"]["from"].get("username", "")
+            type = "direct"
+        elif "my_chat_member" in message:
+            name = message["my_chat_member"]["chat"].get("title", "")
+            type = "group"
+        
+        print(chat_id, name, type)
+        item = {
+            "Id": chat_id,
+            "Name": name,
+            "Type": type
+        }
+        insert(item)
+    except Exception as e:
+        print(f"An error occurred while inserting chat data: {e}")
+
+
     handle_command(chat_id, incoming_text)
     
     return {
@@ -22,6 +43,7 @@ def lambda_handler(event, context):
 
 
 def handle_command(chat_id, message_text):
+
     if message_text.startswith('/'):
         if message_text == '/start':
             response_text = "Hello! I am a bot that will respond to any message you send me."
