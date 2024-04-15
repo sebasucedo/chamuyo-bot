@@ -15,13 +15,18 @@ def insert_data(chats):
             "Name": chat.get("name"),
             "Type": chat.get("type")
         }
-        try:
-            table.put_item(
-                Item=item,
-                ConditionExpression="attribute_not_exists(Id)"
-            )
-        except Exception as e:
-            print(f"Error inserting record: {e}")
+        insert(item)
+
+
+def insert(item):
+    try:
+        table.put_item(
+            Item=item,
+            ConditionExpression="attribute_not_exists(Id)"
+        )
+    except Exception as e:
+        print(f"Error inserting record: {e}")
+
 
 def get_all_items():
     try:
