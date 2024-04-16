@@ -14,7 +14,16 @@ def lambda_handler(event, context):
     chat_id = message["message"]["chat"]["id"]
     incoming_text = message["message"].get("text", "")  
     
-    #TODO: move this logic to a separate function
+    record_user(chat_id, message)
+    handle_command(chat_id, incoming_text)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps("Message processed successfully")
+    }
+
+
+def record_user(chat_id, message):
     try:
         if "message" in message and "from" in message["message"]:
             name = message["message"]["from"].get("username", "")
@@ -22,8 +31,7 @@ def lambda_handler(event, context):
         elif "my_chat_member" in message:
             name = message["my_chat_member"]["chat"].get("title", "")
             type = "group"
-        
-        print(chat_id, name, type)
+
         item = {
             "Id": chat_id,
             "Name": name,
@@ -32,14 +40,6 @@ def lambda_handler(event, context):
         insert(item)
     except Exception as e:
         print(f"An error occurred while inserting chat data: {e}")
-
-
-    handle_command(chat_id, incoming_text)
-    
-    return {
-        'statusCode': 200,
-        'body': json.dumps("Message processed successfully")
-    }
 
 
 def handle_command(chat_id, message_text):
