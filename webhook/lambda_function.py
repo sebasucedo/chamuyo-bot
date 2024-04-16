@@ -53,7 +53,7 @@ def handle_command(chat_id, message_text):
             schedule_event(time_obj)
         else:
             response_text = f"Unrecognized command: {message_text}"
-        send_message(chat_id, response_text)
+            send_message(chat_id, response_text)
     else:
         response_text = get_response(message_text)
         send_message(chat_id, response_text)
