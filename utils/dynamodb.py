@@ -1,4 +1,5 @@
 import boto3
+from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table("ChamuyoBot")
@@ -24,8 +25,14 @@ def insert(item):
             Item=item,
             ConditionExpression="attribute_not_exists(Id)"
         )
+        print(f"Item inserted successfully: {item}")
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ConditionalCheckFailedException':
+            print("Item already exists, no action taken.")
+        else:
+            print(f"Error inserting record: {e}")
     except Exception as e:
-        print(f"Error inserting record: {e}")
+        print(f"Unexpected error: {e}")
 
 
 def get_all_items():
