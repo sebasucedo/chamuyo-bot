@@ -8,7 +8,7 @@ from utils.ai import get_response
 from utils.telegram import send_message
 # from utils.dynamodb import insert
 import boto3
-from utils.dynamodb import DynamodbClient
+from utils.DynamodbClient import DynamodbClient
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table("ChamuyoBot")

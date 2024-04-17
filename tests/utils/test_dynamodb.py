@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 import pytest
 import boto3
 from moto import mock_aws
-from utils.dynamodb import DynamodbClient
+from utils.DynamodbClient import DynamodbClient
 
 @mock_aws
 def test_get_all_items():
