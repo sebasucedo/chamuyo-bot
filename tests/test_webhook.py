@@ -6,7 +6,7 @@ import pytest
 import json
 from webhook.lambda_function import lambda_handler
 
-def test_handler():
+def test_handler_correct_body():
   test_event = {
     "body": json.dumps({
         "update_id": 10000,
@@ -26,3 +26,13 @@ def test_handler():
   response = lambda_handler(test_event, None)
 
   assert response['statusCode'] == 200
+
+
+def test_handler_empty_body():
+  test_event = {
+    "body": None
+  }
+
+  response = lambda_handler(test_event, None)
+
+  assert response['statusCode'] == 500
