@@ -6,22 +6,34 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from utils.ai import get_response
 from utils.telegram import send_message
-from utils.dynamodb import insert
+# from utils.dynamodb import insert
+import boto3
+from utils.dynamodb import DynamodbClient
 
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table("ChamuyoBot")
+dynamodb_client = DynamodbClient(table)
 
 def lambda_handler(event, context):
-    message = json.loads(event["body"])
-    chat_id = message["message"]["chat"]["id"]
-    incoming_text = message["message"].get("text", "")  
+    try:
+        message = json.loads(event["body"])
+        chat_id = message["message"]["chat"]["id"]
+        incoming_text = message["message"].get("text", "")  
+        
+        record_user(chat_id, message)
+        handle_command(chat_id, incoming_text)
+        
+        return {
+            'statusCode': 200,
+            'body': json.dumps("Message processed successfully")
+        }
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return {
+            'statusCode': 500,
+            'body': json.dumps('An error occurred while processing the request.')
+        }
     
-    record_user(chat_id, message)
-    handle_command(chat_id, incoming_text)
-    
-    return {
-        'statusCode': 200,
-        'body': json.dumps("Message processed successfully")
-    }
-
 
 def record_user(chat_id, message):
     try:
@@ -37,7 +49,8 @@ def record_user(chat_id, message):
             "Name": name,
             "Type": type
         }
-        insert(item)
+
+        dynamodb_client.insert(item)
     except Exception as e:
         print(f"An error occurred while inserting chat data: {e}")
 
@@ -53,7 +66,7 @@ def handle_command(chat_id, message_text):
             schedule_event(time_obj)
         else:
             response_text = f"Unrecognized command: {message_text}"
-        send_message(chat_id, response_text)
+            send_message(chat_id, response_text)
     else:
         response_text = get_response(message_text)
         send_message(chat_id, response_text)
