@@ -27,6 +27,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install openai requests aiohttp boto3 pytest moto
         
+    - name: Set AWS Region
+      run: echo "AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}" >> $GITHUB_ENV
+  
     - name: Run Pytest
       run: |
         pytest  
