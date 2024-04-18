@@ -24,12 +24,13 @@ Antes de comenzar, asegúrate de tener instalado Python y pip. Este proyecto req
 - aiohttp
 - boto3
 - pytest
+- pytest-mock
 - moto 
 
 Puedes instalar todas las dependencias necesarias con el siguiente comando:
 
 ```bash
-pip install openai requests aiohttp boto3 pytest moto 
+pip install openai requests aiohttp boto3 pytest pytest-mock moto 
 ```
 
 ## Configuración

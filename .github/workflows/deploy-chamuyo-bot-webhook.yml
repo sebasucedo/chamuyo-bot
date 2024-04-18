@@ -32,7 +32,7 @@ jobs:
   
     - name: Run Pytest
       run: |
-        pytest  
+        pytest -v
         
     - name: Setup AWS CLI
       uses: aws-actions/configure-aws-credentials@v4

@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import json
-from utils.ai import get_message_content
+from utils.InspirationalMessageGenerator import InspirationalMessageGenerator
 from utils.telegram import get_chats, send_messages
 import boto3
 from utils.DynamodbClient import DynamodbClient
@@ -18,7 +18,8 @@ def lambda_handler(event, context):
     chats = dynamodb_client.manage_chats(telegram_chats['groups'] + telegram_chats['directs'])
     ids = [chat['Id'] for chat in chats]
 
-    message = get_message_content()
+    generator = InspirationalMessageGenerator()
+    message = generator.get_message_content()
 
     send_messages(ids, message)
 
