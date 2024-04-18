@@ -25,14 +25,14 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install openai requests aiohttp boto3 pytest moto
+        pip install openai requests aiohttp boto3 pytest pytest-mock moto
         
     - name: Set AWS Region
       run: echo "AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}" >> $GITHUB_ENV
 
     - name: Run Pytest
       run: |
-        pytest  
+        pytest -v
         
     - name: Setup AWS CLI
       uses: aws-actions/configure-aws-credentials@v4

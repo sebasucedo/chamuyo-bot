@@ -6,33 +6,34 @@ import pytest
 import json
 from webhook.lambda_function import lambda_handler
 
-def test_handler_correct_body():
-  test_event = {
-    "body": json.dumps({
-        "update_id": 10000,
-        "message": {
-            "chat": {
-                "id": 1111,
-                "first_name": "John",
-                "last_name": "Doe",
-                "type": "private"
-            },
-            "date": 1441645532,
-            "text": "/settime 10:00"
-        }
-      })
+class TestWebhook:
+  def test_handler_correct_body(self):
+    test_event = {
+      "body": json.dumps({
+          "update_id": 10000,
+          "message": {
+              "chat": {
+                  "id": 1111,
+                  "first_name": "John",
+                  "last_name": "Doe",
+                  "type": "private"
+              },
+              "date": 1441645532,
+              "text": "/settime 10:00"
+          }
+        })
+      }
+
+    response = lambda_handler(test_event, None)
+
+    assert response['statusCode'] == 200
+
+
+  def test_handler_empty_body(self):
+    test_event = {
+      "body": None
     }
 
-  response = lambda_handler(test_event, None)
+    response = lambda_handler(test_event, None)
 
-  assert response['statusCode'] == 200
-
-
-def test_handler_empty_body():
-  test_event = {
-    "body": None
-  }
-
-  response = lambda_handler(test_event, None)
-
-  assert response['statusCode'] == 500
+    assert response['statusCode'] == 500
