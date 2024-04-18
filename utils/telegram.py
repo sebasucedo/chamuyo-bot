@@ -45,7 +45,7 @@ async def send_messages_async(chat_ids, message):
     async with aiohttp.ClientSession() as session:
       tasks = []
       for chat_id in chat_ids:
-          task = asyncio.create_task(send_telegram_message(session, chat_id, message))
+          task = asyncio.create_task(send_telegram_message_async(session, chat_id, message))
           print(f"Adding task to send message to chat_id: {chat_id}")
           tasks.append(task)
 

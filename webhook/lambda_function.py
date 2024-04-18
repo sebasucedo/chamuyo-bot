@@ -6,7 +6,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from utils.ai import get_response
 from utils.telegram import send_message
-# from utils.dynamodb import insert
 import boto3
 from utils.DynamodbClient import DynamodbClient
 
@@ -15,44 +14,44 @@ table = dynamodb.Table("ChamuyoBot")
 dynamodb_client = DynamodbClient(table)
 
 def lambda_handler(event, context):
-    try:
-        message = json.loads(event["body"])
-        chat_id = message["message"]["chat"]["id"]
-        incoming_text = message["message"].get("text", "")  
-        
-        record_user(chat_id, message)
-        handle_command(chat_id, incoming_text)
-        
-        return {
-            'statusCode': 200,
-            'body': json.dumps("Message processed successfully")
-        }
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return {
-            'statusCode': 500,
-            'body': json.dumps('An error occurred while processing the request.')
-        }
+  try:
+    message = json.loads(event["body"])
+    chat_id = message["message"]["chat"]["id"]
+    incoming_text = message["message"].get("text", "")  
     
+    record_user(chat_id, message)
+    handle_command(chat_id, incoming_text)
+    
+    return {
+      'statusCode': 200,
+      'body': json.dumps("Message processed successfully")
+    }
+  except Exception as e:
+    print(f"An error occurred: {e}")
+    return {
+      'statusCode': 500,
+      'body': json.dumps('An error occurred while processing the request.')
+    }
+
 
 def record_user(chat_id, message):
-    try:
-        if "message" in message and "from" in message["message"]:
-            name = message["message"]["from"].get("username", "")
-            type = "direct"
-        elif "my_chat_member" in message:
-            name = message["my_chat_member"]["chat"].get("title", "")
-            type = "group"
+  try:
+    if "message" in message and "from" in message["message"]:
+      name = message["message"]["from"].get("username", "")
+      type = "direct"
+    elif "my_chat_member" in message:
+      name = message["my_chat_member"]["chat"].get("title", "")
+      type = "group"
 
-        item = {
-            "Id": chat_id,
-            "Name": name,
-            "Type": type
-        }
+    item = {
+      "Id": chat_id,
+      "Name": name,
+      "Type": type
+    }
 
-        dynamodb_client.insert(item)
-    except Exception as e:
-        print(f"An error occurred while inserting chat data: {e}")
+    dynamodb_client.insert(item)
+  except Exception as e:
+    print(f"An error occurred while inserting chat data: {e}")
 
 
 def handle_command(chat_id, message_text):
