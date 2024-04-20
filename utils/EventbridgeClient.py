@@ -25,7 +25,7 @@ class EventbridgeClient:
 
   def schedule_event(self, time_obj):
     hour = time_obj.hour
-    cron = f"cron(0 {hour} * * ? *)"
+    cron = f"cron(0 {hour} ? * * *)"
     
     #TODO: create LambdaClient to get lambda object with name and arn
     lambda_client = boto3.client('lambda')
