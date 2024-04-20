@@ -23,33 +23,25 @@ class EventbridgeClient:
     return None  
 
 
-  def schedule_event(self, time_obj):
+  def schedule_event_if_not_exists(self, lambda_arn, time_obj):
     hour = time_obj.hour
     cron = f"cron(0 {hour} ? * * *)"
     
-    #TODO: create LambdaClient to get lambda object with name and arn
-    lambda_client = boto3.client('lambda')
-    lambda_arn = lambda_client.get_function(FunctionName=lambda_name)['Configuration']['FunctionArn']
-
-    print(f"lambda arn:{lambda_arn}")
-
-
-    rule_name = ""
     rule = self.get_rule(lambda_arn, cron)
 
     if rule is not None:
-      rule_name = rule['Name']
-    else:
-      rule_response = self.client.put_rule(
-        Name=f"{lambda_name}-{hour}",
-        ScheduleExpression=cron,
-        State='ENABLED',
-        Description=f"Trigger Lambda at {hour}:00"
-      )
-      rule_name = rule_response['RuleArn'].split('/')[-1]
-      
-    print(f"rule name: {rule_name}")
-
+      return None
+    
+    rule_response = self.client.put_rule(
+      Name=f"{lambda_name}-{hour}",
+      ScheduleExpression=cron,
+      State='ENABLED',
+      Description=f"Trigger Lambda at {hour}:00"
+    )
+    rule_name = rule_response['RuleArn'].split('/')[-1]
+    rule_arn = rule_response['RuleArn'] 
+    
+    print(f"rule name: {rule_name}, rule arn: {rule_arn}")
 
     target_response = self.client.put_targets(
         Rule=rule_name,
@@ -66,21 +58,4 @@ class EventbridgeClient:
     else:
         print("Target added successfully")
 
-
-
-
-
-
-
-  # def put_events(self, entries):
-  #     return self._eventbridge_client.put_events(Entries=entries)
-
-  # def put_events_with_retry(self, entries, max_retries=3):
-  #     for i in range(max_retries):
-  #         try:
-  #             response = self.put_events(entries)
-  #             return response
-  #         except Exception as e:
-  #             if i == max_retries - 1:
-  #                 raise e
-  #         time.sleep(2 ** i)
+    return rule_arn
