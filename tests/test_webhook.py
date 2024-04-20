@@ -5,8 +5,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pytest
 import json
 from webhook.lambda_function import lambda_handler
+from moto import mock_aws
 
 class TestWebhook:
+  @mock_aws
   def test_handler_correct_body(self):
     test_event = {
         "body": json.dumps({
@@ -37,6 +39,7 @@ class TestWebhook:
     assert response['statusCode'] == 200
 
 
+  @mock_aws
   def test_handler_empty_body(self):
     test_event = {
       "body": None
