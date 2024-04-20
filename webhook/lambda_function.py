@@ -64,7 +64,7 @@ def handle_command(chat_id, message_text):
     if message_text.startswith('/settime '):
       time_string = message_text.split('/settime ')[1].strip()
       time_obj = datetime.strptime(time_string, '%H:%M').time()
-      schedule_event(chat_id, time_obj)
+      # schedule_event(chat_id, time_obj)
     else:
       response_text = f"Unrecognized command: {message_text}"
       telegramBot.send_message(chat_id, response_text)
