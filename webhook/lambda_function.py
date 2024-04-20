@@ -6,12 +6,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import boto3
 from utils.InspirationalMessageGenerator import InspirationalMessageGenerator
-from utils.telegram import send_message
+from utils.TelegramBot import TelegramBot
 from utils.DynamodbClient import DynamodbClient
+from utils.EventbridgeClient import EventbridgeClient
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table("ChamuyoBot")
 dynamodb_client = DynamodbClient(table)
+telegramBot = TelegramBot()
+eventbridge_client = EventbridgeClient()
 
 def lambda_handler(event, context):
   try:
@@ -61,19 +64,21 @@ def handle_command(chat_id, message_text):
     if message_text.startswith('/settime '):
       time_string = message_text.split('/settime ')[1].strip()
       time_obj = datetime.strptime(time_string, '%H:%M').time()
-      schedule_event(time_obj)
+      schedule_event(chat_id, time_obj)
     else:
       response_text = f"Unrecognized command: {message_text}"
-      send_message(chat_id, response_text)
+      telegramBot.send_message(chat_id, response_text)
   else:
     generator = InspirationalMessageGenerator()
     response_text = generator.get_response(message_text)
-    send_message(chat_id, response_text)
+    telegramBot.send_message(chat_id, response_text)
 
 
-def schedule_event(time_obj):
+def schedule_event(chat_id, time_obj):
 
-    #TODO: Implement event scheduling logic here
+    eventbridge_client.schedule_event(time_obj)
 
     time_str = time_obj.strftime('%H:%M')
     print("Scheduling event for: {}".format(time_str))
+
+    #TODO: set event to user in DynamoDB
