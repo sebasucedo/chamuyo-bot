@@ -5,10 +5,12 @@ class DynamodbClient:
   def __init__(self, table):
     self.table = table
 
+
   def manage_chats(self, chats):
     self.insert_data(chats)
     all_items = self.get_all_items()
     return all_items
+
 
   def insert_data(self, chats):
     for chat in chats:
@@ -18,6 +20,7 @@ class DynamodbClient:
         "Type": chat.get("type")
       }
       self.insert(item)
+
 
   def insert(self, item):
     try:
@@ -47,3 +50,18 @@ class DynamodbClient:
     except Exception as e:
       print(f"Error fetching records: {e}")
       return []
+
+
+  def update_item(self, chat_id, attribute, new_value):
+    try:
+      response = self.table.update_item(
+          Key={"Id": chat_id},
+          UpdateExpression=f"SET {attribute} = :val",
+          ExpressionAttributeValues={":val": new_value},
+          ReturnValues="UPDATED_NEW"
+      )
+      print(f"Update successful: {response}")
+    except ClientError as e:
+      print(f"Error updating record: {e}")
+    except Exception as e:
+      print(f"Unexpected error: {e}")
