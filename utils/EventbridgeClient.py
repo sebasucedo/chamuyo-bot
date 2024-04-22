@@ -1,4 +1,5 @@
 import boto3
+import json
 
 lambda_name='chamuyo-bot'
 
@@ -43,19 +44,28 @@ class EventbridgeClient:
     
     print(f"rule name: {rule_name}, rule arn: {rule_arn}")
 
+    event_details = {
+      "source": "eventtime.source",
+      "detail-type": "Scheduled Event",
+      "detail": {
+        "EventTime": f"{hour}:00"
+      }
+    }
+
     target_response = self.client.put_targets(
-        Rule=rule_name,
-        Targets=[
-            {
-                'Id': str(hour),
-                'Arn': lambda_arn
-            }
-        ]
+      Rule=rule_name,
+      Targets=[
+        {
+          'Id': str(hour),
+          'Arn': lambda_arn,
+          'Input': json.dumps(event_details)
+        }
+      ]
     )
 
     if target_response['FailedEntryCount'] > 0:
-        print("Error adding targets:", target_response['FailedEntries'])
+      print("Error adding targets:", target_response['FailedEntries'])
     else:
-        print("Target added successfully")
+      print("Target added successfully")
 
     return rule_arn

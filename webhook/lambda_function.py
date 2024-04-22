@@ -24,8 +24,13 @@ def lambda_handler(event, context):
     chat_id = message["message"]["chat"]["id"]
     incoming_text = message["message"].get("text", "")  
     
-    record_user(chat_id, message)
-    handle_command(chat_id, incoming_text)
+    item = dynamodb_client.get_items_by_id(chat_id)
+    if item is None:
+      record_user(chat_id, message)
+      response_text = f"Welcome to ChamuyoBot! I will respond to any message you send me."
+      telegramBot.send_message(chat_id, response_text)
+    else:
+      handle_command(chat_id, incoming_text)
     
     return {
       'statusCode': 200,
@@ -48,8 +53,11 @@ def record_user(chat_id, message):
       name = message["my_chat_member"]["chat"].get("title", "")
       type = "group"
 
+    DEFAULT_EVENT_TIME = "13:00"
+
     item = {
       "Id": chat_id,
+      "EventTime": DEFAULT_EVENT_TIME,
       "Name": name,
       "Type": type
     }
