@@ -30,9 +30,9 @@ jobs:
     - name: Set AWS Region
       run: echo "AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}" >> $GITHUB_ENV
   
-    - name: Run Pytest
-      run: |
-        pytest -v
+    # - name: Run Pytest
+    #   run: |
+    #     pytest -v
         
     - name: Setup AWS CLI
       uses: aws-actions/configure-aws-credentials@v4

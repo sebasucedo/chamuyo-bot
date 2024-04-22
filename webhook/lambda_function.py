@@ -24,8 +24,13 @@ def lambda_handler(event, context):
     chat_id = message["message"]["chat"]["id"]
     incoming_text = message["message"].get("text", "")  
     
-    record_user(chat_id, message)
-    handle_command(chat_id, incoming_text)
+    item = dynamodb_client.get_items_by_id(chat_id)
+    if item is None:
+      record_user(chat_id, message)
+      response_text = f"Welcome to ChamuyoBot! I will respond to any message you send me."
+      telegramBot.send_message(chat_id, response_text)
+    else:
+      handle_command(chat_id, incoming_text)
     
     return {
       'statusCode': 200,
@@ -48,8 +53,11 @@ def record_user(chat_id, message):
       name = message["my_chat_member"]["chat"].get("title", "")
       type = "group"
 
+    DEFAULT_EVENT_TIME = "13:00"
+
     item = {
       "Id": chat_id,
+      "EventTime": DEFAULT_EVENT_TIME,
       "Name": name,
       "Type": type
     }
@@ -66,7 +74,9 @@ def handle_command(chat_id, message_text):
     if message_text.startswith('/settime '):
       time_string = message_text.split('/settime ')[1].strip()
       time_obj = datetime.strptime(time_string, '%H:%M').time()
-      schedule_event(chat_id, time_obj)
+      ok = schedule_event(chat_id, time_obj)
+      if ok:
+        telegramBot.sendMessage(chat_id, f"Inspirational message scheduled for {time_string}")
     else:
       response_text = f"Unrecognized command: {message_text}"
       telegramBot.send_message(chat_id, response_text)
@@ -77,6 +87,7 @@ def handle_command(chat_id, message_text):
 
 
 def schedule_event(chat_id, time_obj):
+  try:
     lambda_arn = lambda_client.get_arn()
 
     new_rule_arn = eventbridge_client.schedule_event_if_not_exists(lambda_arn, time_obj)
@@ -86,4 +97,8 @@ def schedule_event(chat_id, time_obj):
     time_str = time_obj.strftime('%H:%M')
     print("Scheduling event for: {}".format(time_str))
 
-    #TODO: set event to user by chat_id in DynamoDB
+    dynamodb_client.update_item(chat_id, "EventTime", time_str)
+    return True
+  except Exception as e:
+    print(f"An error occurred while scheduling event: {e}")
+    return False

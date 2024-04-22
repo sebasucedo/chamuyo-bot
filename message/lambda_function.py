@@ -12,14 +12,15 @@ dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table("ChamuyoBot")
 dynamodb_client = DynamodbClient(table)
 telegramBot = TelegramBot()
+generator = InspirationalMessageGenerator()
 
 def lambda_handler(event, context):
   try:
-    telegram_chats = telegramBot.get_chats()
-    chats = dynamodb_client.manage_chats(telegram_chats['groups'] + telegram_chats['directs'])
-    ids = [chat['Id'] for chat in chats]
+    eventTime = event.get('detail', {}).get('EventTime')
+    print(eventTime)
+    items = dynamodb_client.get_items_by_event_time(eventTime)
+    ids = [item["Id"] for item in items]
 
-    generator = InspirationalMessageGenerator()
     message = generator.get_message_content()
 
     telegramBot.send_messages(ids, message)

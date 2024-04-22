@@ -45,58 +45,58 @@ class TelegramBot:
     return chat_ids
 
 
-async def send_messages_async(self, chat_ids, message):
-  async with aiohttp.ClientSession() as session:
-    tasks = []
+  async def send_messages_async(self, chat_ids, message):
+    async with aiohttp.ClientSession() as session:
+      tasks = []
+      for chat_id in chat_ids:
+        task = asyncio.create_task(self.send_telegram_message_async(session, chat_id, message))
+        print(f"Adding task to send message to chat_id: {chat_id}")
+        tasks.append(task)
+
+      responses = await asyncio.gather(*tasks)
+      return responses
+
+
+  async def send_message_async(self, session, chat_id, message):
+    payload = {"chat_id": chat_id, "text": message}
+
+    try:
+      async with session.post(self.url_send, data=payload) as response:
+        return await response.json() 
+      
+    except requests.exceptions.HTTPError as http_err:
+      print(f"HTTP error occurred: {http_err}")
+    except requests.exceptions.ConnectionError as conn_err:
+      print(f"Connection error occurred: {conn_err}")
+    except requests.exceptions.Timeout as timeout_err:
+      print(f"Timeout error occurred: {timeout_err}")
+    except requests.exceptions.RequestException as req_err:
+      print(f"An error occurred while making the request: {req_err}")
+
+    return {"error": f"An error occurred while sending the message to chat_id: {chat_id}."}
+
+
+  def send_messages(self, chat_ids, message):
+    responses = []
     for chat_id in chat_ids:
-      task = asyncio.create_task(self.send_telegram_message_async(session, chat_id, message))
-      print(f"Adding task to send message to chat_id: {chat_id}")
-      tasks.append(task)
+      chat_id_str = str(chat_id)
+      response = self.send_message(chat_id_str, message)
+      responses.append(response)
+    return responses 
 
-    responses = await asyncio.gather(*tasks)
-    return responses
+      
+  def send_message(self, chat_id, message):
+    payload = {"chat_id": chat_id, "text": message}
 
-
-async def send_telegram_message_async(self, session, chat_id, message):
-  payload = {"chat_id": chat_id, "text": message}
-
-  try:
-    async with session.post(self.url_send, data=payload) as response:
-      return await response.json() 
-    
-  except requests.exceptions.HTTPError as http_err:
-    print(f"HTTP error occurred: {http_err}")
-  except requests.exceptions.ConnectionError as conn_err:
-    print(f"Connection error occurred: {conn_err}")
-  except requests.exceptions.Timeout as timeout_err:
-    print(f"Timeout error occurred: {timeout_err}")
-  except requests.exceptions.RequestException as req_err:
-    print(f"An error occurred while making the request: {req_err}")
-
-  return {"error": f"An error occurred while sending the message to chat_id: {chat_id}."}
-
-
-def send_messages(self, chat_ids, message):
-  responses = []
-  for chat_id in chat_ids:
-    chat_id_str = str(chat_id)
-    response = self.send_message(chat_id_str, message)
-    responses.append(response)
-  return responses 
-
-    
-def send_message(self, chat_id, message):
-  payload = {"chat_id": chat_id, "text": message}
-
-  try:
-    response = requests.post(self.url_send, data=payload)
-    response.raise_for_status()
-    return response.json()
-  except requests.exceptions.HTTPError as http_err:
-    print(f"HTTP error occurred: {http_err}")
-  except requests.exceptions.ConnectionError as conn_err:
-    print(f"Connection error occurred: {conn_err}")
-  except requests.exceptions.Timeout as timeout_err:
-    print(f"Timeout error occurred: {timeout_err}")
-  except requests.exceptions.RequestException as req_err:
-    print(f"An error occurred while making the request: {req_err}")
+    try:
+      response = requests.post(self.url_send, data=payload)
+      response.raise_for_status()
+      return response.json()
+    except requests.exceptions.HTTPError as http_err:
+      print(f"HTTP error occurred: {http_err}")
+    except requests.exceptions.ConnectionError as conn_err:
+      print(f"Connection error occurred: {conn_err}")
+    except requests.exceptions.Timeout as timeout_err:
+      print(f"Timeout error occurred: {timeout_err}")
+    except requests.exceptions.RequestException as req_err:
+      print(f"An error occurred while making the request: {req_err}")
