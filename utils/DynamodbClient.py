@@ -90,7 +90,7 @@ class DynamodbClient:
   def get_items_by_event_time(self, event_time):
     try:
       response = self.table.query(
-        IndexName='EventTime-Index',
+        IndexName='EventTime-index',
         KeyConditionExpression=Key('EventTime').eq(event_time)
       )
       items = response['Items']
