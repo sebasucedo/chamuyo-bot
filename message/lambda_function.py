@@ -14,10 +14,15 @@ dynamodb_client = DynamodbClient(table)
 telegramBot = TelegramBot()
 generator = InspirationalMessageGenerator()
 
+DEFAULT_EVENT_TIME = "13:00"
+
 def lambda_handler(event, context):
   try:
     eventTime = event.get('detail', {}).get('EventTime')
-    print(eventTime)
+    print(f"EventTime: {eventTime}")
+    if (eventTime is None):
+      eventTime = DEFAULT_EVENT_TIME
+    
     items = dynamodb_client.get_items_by_event_time(eventTime)
     ids = [item["Id"] for item in items]
 
