@@ -76,7 +76,7 @@ def handle_command(chat_id, message_text):
       time_obj = datetime.strptime(time_string, '%H:%M').time()
       ok = schedule_event(chat_id, time_obj)
       if ok:
-        telegramBot.sendMessage(chat_id, f"Inspirational message scheduled for {time_string}")
+        telegramBot.send_message(chat_id, f"Inspirational message scheduled for {time_string}")
     else:
       response_text = f"Unrecognized command: {message_text}"
       telegramBot.send_message(chat_id, response_text)
