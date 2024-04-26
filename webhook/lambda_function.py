@@ -89,6 +89,7 @@ def handle_command(chat_id, message_text):
 def schedule_event(chat_id, time_obj):
   try:
     lambda_arn = lambda_client.get_arn()
+    print(lambda_arn)
 
     new_rule_arn = eventbridge_client.schedule_event_if_not_exists(lambda_arn, time_obj)
     if new_rule_arn is not None:
