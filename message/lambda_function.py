@@ -26,6 +26,9 @@ def lambda_handler(event, context):
     items = dynamodb_client.get_items_by_event_time(eventTime)
     ids = [item["Id"] for item in items]
 
+    for id in ids:
+        print(id)
+
     message = generator.get_message_content()
 
     telegramBot.send_messages(ids, message)
