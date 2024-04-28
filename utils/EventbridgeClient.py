@@ -33,8 +33,10 @@ class EventbridgeClient:
     if rule is not None:
       return None
     
+    rule_name = f"{lambda_name}-{hour}"
+
     rule_response = self.client.put_rule(
-      Name=f"{lambda_name}-{hour}",
+      Name=rule_name,
       ScheduleExpression=cron,
       State='ENABLED',
       Description=f"Trigger Lambda at {hour}:00"
@@ -45,7 +47,7 @@ class EventbridgeClient:
     print(f"rule name: {rule_name}, rule arn: {rule_arn}")
 
     event_details = {
-      "source": "eventtime.source",
+      "source": rule_name,
       "detail-type": "Scheduled Event",
       "detail": {
         "EventTime": f"{hour}:00"
