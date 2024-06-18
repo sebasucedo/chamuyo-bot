@@ -15,6 +15,11 @@ Enlace al bot: [chamuyo-bot](https://t.me/chamuyo_bot)
 - Mensajes generados mediante inteligencia artificial para ofrecer variedad y relevancia.
 - Fácil configuración y personalización para adaptarse a las necesidades de tu equipo.
 
+## Diagrama
+
+![chamuyo-bot_architeture_diagram drawio](https://github.com/sebasucedo/chamuyo-bot/assets/394155/54f2e325-f1ed-4776-802d-94ec581a9be6)
+
+
 ## Requisitos
 
 Antes de comenzar, asegúrate de tener instalado Python y pip. Este proyecto requiere las siguientes librerías:
