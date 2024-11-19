@@ -1,16 +1,16 @@
+import os
 import boto3
 import json
-
-lambda_name='chamuyo-bot'
 
 class EventbridgeClient:
   def __init__(self):
     self.client = boto3.client('events')
+    self.lambda_name = os.getenv('LAMBDA_NAME')
   
 
   def get_rule(self, lambda_arn, expected_cron_expression):
     rules_response = self.client.list_rules(
-      NamePrefix=lambda_name
+      NamePrefix=self.lambda_name
     )
 
     for rule in rules_response['Rules']:
@@ -18,7 +18,7 @@ class EventbridgeClient:
             targets_response = self.client.list_targets_by_rule(Rule=rule['Name'])
             for target in targets_response['Targets']:
                 if target['Arn'] == lambda_arn:
-                    print(f"Regla encontrada: {rule['Name']}")
+                    print(f"Rule found: {rule['Name']}")
                     return rule
 
     return None  
@@ -33,7 +33,7 @@ class EventbridgeClient:
     if rule is not None:
       return None
     
-    rule_name = f"{lambda_name}-{hour}"
+    rule_name = f"{self.lambda_name}-{hour}"
 
     rule_response = self.client.put_rule(
       Name=rule_name,
