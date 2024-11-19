@@ -17,7 +17,7 @@ Enlace al bot: [chamuyo-bot](https://t.me/chamuyo_bot)
 
 ## Diagrama
 
-![chamuyo-bot_architeture_diagram drawio](https://github.com/sebasucedo/chamuyo-bot/assets/394155/54f2e325-f1ed-4776-802d-94ec581a9be6)
+![chamuyo-bot_architeture_diagram drawio](https://github.com/user-attachments/assets/66319f50-5951-401a-955f-fd18167dade9)
 
 
 ## Requisitos
