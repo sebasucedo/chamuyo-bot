@@ -18,6 +18,8 @@ telegramBot = TelegramBot()
 eventbridge_client = EventbridgeClient()
 lambda_client = LambdaClient("chamuyo-bot")
 
+DEFAULT_EVENT_TIME = "13:00"
+
 def lambda_handler(event, context):
   try:
     message = json.loads(event["body"])
@@ -52,8 +54,6 @@ def record_user(chat_id, message):
     elif "my_chat_member" in message:
       name = message["my_chat_member"]["chat"].get("title", "")
       type = "group"
-
-    DEFAULT_EVENT_TIME = "13:00"
 
     item = {
       "Id": chat_id,

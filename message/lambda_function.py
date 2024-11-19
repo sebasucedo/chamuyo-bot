@@ -9,7 +9,7 @@ from utils.TelegramBot import TelegramBot
 from utils.DynamodbClient import DynamodbClient
 
 dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table("ChamuyoBot")
+table = dynamodb.Table(os.getenv("DYNAMODB_TABLE"))
 dynamodb_client = DynamodbClient(table)
 telegramBot = TelegramBot()
 generator = InspirationalMessageGenerator()
@@ -25,9 +25,6 @@ def lambda_handler(event, context):
     
     items = dynamodb_client.get_items_by_event_time(eventTime)
     ids = [item["Id"] for item in items]
-
-    for id in ids:
-        print(id)
 
     message = generator.get_message_content()
 

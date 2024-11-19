@@ -6,6 +6,7 @@ class InspirationalMessageGenerator:
     self.model = model
     self.client = OpenAI()
 
+
   def get_message_content(self):
     try:
       weekday_number = datetime.now().weekday()
@@ -26,6 +27,7 @@ class InspirationalMessageGenerator:
     except Exception as e:
       print(f"An unexpected error occurred trying to get message content: {e}")
       raise
+
 
   def get_response(self, incoming_message):
     try:
