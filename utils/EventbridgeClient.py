@@ -5,13 +5,12 @@ import json
 class EventbridgeClient:
   def __init__(self):
     self.client = boto3.client('events')
-    self.lambda_name = os.getenv('LAMBDA_NAME')
+    self.lambda_name = os.getenv('LAMBDA_NAME', "")
   
 
   def get_rule(self, lambda_arn, expected_cron_expression):
 
-    name_prefix = self.lambda_name if self.lambda_name is not None else ""
-    rules_response = self.client.list_rules(NamePrefix=name_prefix)
+    rules_response = self.client.list_rules(NamePrefix=self.lambda_name)
 
     for rule in rules_response['Rules']:
         if rule['ScheduleExpression'] == expected_cron_expression:
