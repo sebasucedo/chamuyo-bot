@@ -9,9 +9,9 @@ class EventbridgeClient:
   
 
   def get_rule(self, lambda_arn, expected_cron_expression):
-    rules_response = self.client.list_rules(
-      NamePrefix=self.lambda_name
-    )
+
+    name_prefix = self.lambda_name if self.lambda_name is not None else ""
+    rules_response = self.client.list_rules(NamePrefix=name_prefix)
 
     for rule in rules_response['Rules']:
         if rule['ScheduleExpression'] == expected_cron_expression:
