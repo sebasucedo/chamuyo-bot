@@ -5,7 +5,7 @@ import json
 class EventbridgeClient:
   def __init__(self):
     self.client = boto3.client('events')
-    self.lambda_name = os.getenv('LAMBDA_NAME', "")
+    self.lambda_name = os.getenv('LAMBDA_NAME', "chamuyo-bot")
   
 
   def get_rule(self, lambda_arn, expected_cron_expression):

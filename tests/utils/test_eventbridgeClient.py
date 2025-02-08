@@ -9,7 +9,7 @@ class TestEventbridgeClient():
 
     rule_name = 'chamuyo-bot-rule'
     cron_expression = 'cron(0 12 * * ? *)'
-    lambda_arn = 'arn:aws:lambda:us-east-1:123456789012:function:chamuyo-bot'
+    lambda_arn = 'arn:aws:lambda:eu-north-1:123:function:chamuyo-bot'
 
     client.put_rule(
         Name=rule_name,
